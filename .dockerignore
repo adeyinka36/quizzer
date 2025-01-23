@@ -1,0 +1,16 @@
+# Ignore Git files
+.git
+.gitignore
+
+# Ignore dependencies (installed during build)
+node_modules/
+vendor/
+
+# Ignore logs and caches
+*.log
+.cache/
+
+# Ignore local development files
+.env
+.idea/
+.vscode/

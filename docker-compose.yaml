@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+    restart: unless-stopped
+    networks:
+      - quizzer-network
+    ports:
+      - "9000:9000"
+
+  queue-worker:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+    restart: unless-stopped
+    networks:
+      - quizzer-network
+    command: php artisan queue:work
+
+  redis:
+    image: bitnami/redis:7.2
+    platform: linux/amd64
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=no
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_DISABLE_COMMANDS=FLUSHOB,FLUSHALL
+    restart: always
+    volumes:
+      - redis_data:/bitnami/redis/data
+    networks:
+      - quizzer-network
+
+networks:
+  quizzer-network:
+volumes:
+  redis_data:
