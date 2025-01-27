@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\QuestionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('players')->group(function () {
@@ -18,4 +19,11 @@ Route::prefix('players')->group(function () {
     Route::resource('/', PlayerController::class)->except([
         'put', 'destroy', 'delete', 'store'
     ]);
+});
+
+
+Route::prefix('questions')->group(function () {
+    Route::middleware(['auth:sanctum', 'ability:can-view-questions'])->group(function () {
+        Route::get('/',[QuestionController::class, 'index'])->name('questions');
+    });
 });

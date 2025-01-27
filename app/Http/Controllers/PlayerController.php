@@ -43,7 +43,7 @@ class PlayerController extends Controller
      */
     public function show(Player $player)
     {
-        $token = $player->createToken('player-'. $player->id,['control-own-resources'])->plainTextToken;
+        $token = $player->createToken('player-'. $player->id,['control-own-resources', 'ability:can-view-questions'])->plainTextToken;
         return response()->json([
             '_links' => [
                'self' => [
@@ -66,7 +66,7 @@ class PlayerController extends Controller
         }
 
         // Generate a new token
-        $token = $player->createToken('player-'. $player->id, ['control-own-resources'])->plainTextToken;
+        $token = $player->createToken('player-'. $player->id, ['control-own-resources', 'ability:can-view-questions'])->plainTextToken;
 
         return response()->json([
             '_links' => [
