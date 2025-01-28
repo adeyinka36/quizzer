@@ -62,4 +62,9 @@ class Player extends Authenticatable
     {
         return $this->belongsToMany(Monetization::class);
     }
+
+    public function getPermissions()
+    {
+
+    }
 }

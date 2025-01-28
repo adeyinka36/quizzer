@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Game;
 use App\Models\Question;
-use Closure;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Random\RandomException;
 
@@ -21,9 +20,9 @@ class GameFactory extends Factory
      */
     public function definition(): array
     {
-        $statuses = ['completed', 'in_progress', 'cancelled'];
+        $statuses = ['completed', 'in_progress', 'cancelled', 'hold'];
         return [
-            'status' => $statuses[random_int(0,2)],
+            'status' => $statuses[random_int(0,3)],
         ];
     }
 

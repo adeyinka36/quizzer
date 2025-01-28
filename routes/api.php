@@ -1,5 +1,7 @@
 <?php
 
+use App\enums\PlayerPermission;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\QuestionController;
 use Illuminate\Support\Facades\Route;
@@ -25,5 +27,22 @@ Route::prefix('players')->group(function () {
 Route::prefix('questions')->group(function () {
     Route::middleware(['auth:sanctum', 'ability:can-view-questions'])->group(function () {
         Route::get('/',[QuestionController::class, 'index'])->name('questions');
+    });
+});
+
+Route::prefix('games')->group(function () {
+    Route::middleware(['can:view,game'])->group(function () {
+        Route::get('/{game}',[GameController::class, 'show'])->name('games.show');
+    });
+
+    Route::middleware(['can:update,game'])->group(function () {
+        Route::put('/{game}',[GameController::class, 'update'])->name('games.update');
+    });
+    Route::middleware(['auth:sanctum', PlayerPermission::CAN_CREATE_GAME->value])->group(function () {
+        Route::post('/',[GameController::class, 'store'])->name('games.store');
+    });
+
+    Route::middleware(['can:destroy,game'])->group(function () {
+        Route::delete('/{game}',[GameController::class, 'destroy'])->name('games.destroy');
     });
 });

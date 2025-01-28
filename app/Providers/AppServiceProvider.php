@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Game;
+use App\Observers\GameObserver;
+use App\Policies\GamePolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Game::observe(GameObserver::class);
     }
 }

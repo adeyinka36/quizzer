@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('game_id');
             $table->uuid('player_id');
+            $table->boolean('accepted_game_invite')->default(false);
             $table->softDeletes();
             $table->timestamps();
 

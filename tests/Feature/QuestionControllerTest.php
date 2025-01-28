@@ -16,6 +16,19 @@ it('Retrieves questions for a a given game', function () {
 
     $response = $this->getJson('api/questions?game_id='.$game->id);
 
-
-    dd($response->json());
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            '_links' => ['self' => ['href']],
+            'data' => [
+                '*' => [
+                    'question',
+                    'options' => [
+                        '*' => [
+                            'option_text',
+                            'is_correct'
+                        ]
+                    ]
+                ]
+            ],
+        ]);
 });
