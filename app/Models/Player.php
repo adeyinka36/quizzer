@@ -14,7 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 class Player extends Authenticatable
 {
     /** @use HasFactory<PlayerFactory> */
-    use HasFactory, Notifiable, HasApiTokens, HasUuids, SoftDeletes;
+    use HasApiTokens, HasFactory, HasUuids, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -38,7 +38,6 @@ class Player extends Authenticatable
         'password',
     ];
 
-
     /**
      * Get the attributes that should be cast.
      *
@@ -48,10 +47,9 @@ class Player extends Authenticatable
     {
         return [
             'password' => 'hashed',
-            'id' => 'string'
+            'id' => 'string',
         ];
     }
-
 
     public function games()
     {
@@ -63,8 +61,5 @@ class Player extends Authenticatable
         return $this->belongsToMany(Monetization::class);
     }
 
-    public function getPermissions()
-    {
-
-    }
+    public function getPermissions() {}
 }

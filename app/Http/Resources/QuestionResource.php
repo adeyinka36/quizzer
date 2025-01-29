@@ -18,6 +18,7 @@ class QuestionResource extends JsonResource
             'question' => $this->question->question_text,
             'options' => OptionResource::collection($this->question->options),
         ];
+
         return $questions;
     }
 }

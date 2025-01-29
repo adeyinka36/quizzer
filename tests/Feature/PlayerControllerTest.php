@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 
 it('stores a new player successfully', function () {
-     $data = [
+    $data = [
         'first_name' => 'John',
         'last_name' => 'Doe',
         'email' => 'john.doe@example.com',
@@ -29,7 +29,7 @@ it('stores a new player successfully', function () {
 
     $this->assertDatabaseHas('players', [
         'email' => $data['email'],
-        'username' => $data['username']
+        'username' => $data['username'],
     ]);
 
     $player = Player::where('email', $data['email'])->first();
@@ -55,7 +55,7 @@ it('retrieves a player successfully', function () {
                 'email',
                 'username',
             ],
-            'token'
+            'token',
         ])
         ->assertJson([
             '_links' => ['self' => ['href' => "api/players/{$player->id}"]],
@@ -73,10 +73,10 @@ it('logs in and retrieves a player', function () {
     $player = Player::factory()->create(['password' => 'Secret222###']);
     $data = [
         'email' => $player->email,
-        'password' => 'Secret222###'
+        'password' => 'Secret222###',
     ];
 
-    $response = $this->postJson("/api/players/login", $data);
+    $response = $this->postJson('/api/players/login', $data);
 
     $response->assertStatus(200)
         ->assertJsonStructure([
@@ -88,7 +88,7 @@ it('logs in and retrieves a player', function () {
                 'email',
                 'username',
             ],
-            'token'
+            'token',
         ])
         ->assertJson([
             '_links' => ['self' => ['href' => "api/players/{$player->id}"]],
@@ -176,7 +176,6 @@ it('fails validation if the current password is incorrect', function () {
     // Perform the request
     $response = $this->putJson("api/players/{$player->id}", $data);
 
-
     // Assert validation failure
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['current_password']);
@@ -206,7 +205,6 @@ it('fails validation if the password confirmation does not match', function () {
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['password_confirmation']);
 });
-
 
 it('allows an authenticated user to delete a player', function () {
     $player = Player::factory()->create();
@@ -241,9 +239,7 @@ it('returns 404 if the player does not exist', function () {
         ['*']
     );
 
-    $response = $this->deleteJson("api/players/no-existent-id");
+    $response = $this->deleteJson('api/players/no-existent-id');
 
     $response->assertStatus(404);
 });
-
-

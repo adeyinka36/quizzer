@@ -33,10 +33,10 @@ class GameCreateUpdateRequest extends FormRequest
     {
         return [
             'name.max' => 'Game name cannot exceed 255 characters.',
-           'start_time.required' => 'Start time is required.',
-           'start_time.date' => 'Start time must be a valid date.',
-           'monetization_id.uuid' => 'Monetization ID must be a valid UUID.',
-           'creator_id.uuid' => 'Creator ID must be a valid UUID.',
+            'start_time.required' => 'Start time is required.',
+            'start_time.date' => 'Start time must be a valid date.',
+            'monetization_id.uuid' => 'Monetization ID must be a valid UUID.',
+            'creator_id.uuid' => 'Creator ID must be a valid UUID.',
         ];
     }
 }

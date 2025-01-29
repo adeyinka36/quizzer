@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GameCreateUpdateRequest;
 use App\Http\Resources\GameResource;
 use App\Models\Game;
-use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
@@ -17,8 +16,8 @@ class GameController extends Controller
         return response()->json([
             '_links' => [
                 'self' => [
-                    'href' => 'api/games/' . $game->id,
-                ]
+                    'href' => 'api/games/'.$game->id,
+                ],
             ],
             'data' => new GameResource($game),
         ], 201);
@@ -32,8 +31,8 @@ class GameController extends Controller
         return response()->json([
             '_links' => [
                 'self' => [
-                    'href' => 'api/games/' . $game->id,
-                ]
+                    'href' => 'api/games/'.$game->id,
+                ],
             ],
             'data' => new GameResource($game),
         ], 200);
@@ -44,8 +43,8 @@ class GameController extends Controller
         return response()->json([
             '_links' => [
                 'self' => [
-                    'href' => 'api/games/' . $game->id,
-                ]
+                    'href' => 'api/games/'.$game->id,
+                ],
             ],
             'data' => new GameResource($game),
         ], 200);
@@ -58,4 +57,3 @@ class GameController extends Controller
         return response()->json([], 204);
     }
 }
-

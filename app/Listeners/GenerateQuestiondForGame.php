@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\GameCreated;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class GenerateQuestiondForGame
 {
@@ -16,8 +14,7 @@ class GenerateQuestiondForGame
         //
     }
 
-
-//TODO: Make this a queued listener
+    // TODO: Make this a queued listener
     /**
      * Handle the event.
      */

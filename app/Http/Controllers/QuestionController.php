@@ -21,8 +21,8 @@ class QuestionController extends Controller
         return response()->json([
             '_links' => [
                 'self' => [
-                    'href' => 'api/questions/' . $validated['game_id'],
-                ]
+                    'href' => 'api/questions/'.$validated['game_id'],
+                ],
             ],
             'data' => QuestionResource::collection($questions),
         ], 200);

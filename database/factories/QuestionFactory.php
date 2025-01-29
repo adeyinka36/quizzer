@@ -24,7 +24,6 @@ class QuestionFactory extends Factory
         ];
     }
 
-
     public function configure(): self
     {
         return $this->afterCreating(function ($question) {

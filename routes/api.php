@@ -19,30 +19,29 @@ Route::prefix('players')->group(function () {
     });
 
     Route::resource('/', PlayerController::class)->except([
-        'put', 'destroy', 'delete', 'store'
+        'put', 'destroy', 'delete', 'store',
     ]);
 });
 
-
 Route::prefix('questions')->group(function () {
     Route::middleware(['auth:sanctum', 'ability:can-view-questions'])->group(function () {
-        Route::get('/',[QuestionController::class, 'index'])->name('questions');
+        Route::get('/', [QuestionController::class, 'index'])->name('questions');
     });
 });
 
 Route::prefix('games')->group(function () {
     Route::middleware(['can:view,game'])->group(function () {
-        Route::get('/{game}',[GameController::class, 'show'])->name('games.show');
+        Route::get('/{game}', [GameController::class, 'show'])->name('games.show');
     });
 
     Route::middleware(['can:update,game'])->group(function () {
-        Route::put('/{game}',[GameController::class, 'update'])->name('games.update');
+        Route::put('/{game}', [GameController::class, 'update'])->name('games.update');
     });
     Route::middleware(['auth:sanctum', PlayerPermission::CAN_CREATE_GAME->value])->group(function () {
-        Route::post('/',[GameController::class, 'store'])->name('games.store');
+        Route::post('/', [GameController::class, 'store'])->name('games.store');
     });
 
     Route::middleware(['can:destroy,game'])->group(function () {
-        Route::delete('/{game}',[GameController::class, 'destroy'])->name('games.destroy');
+        Route::delete('/{game}', [GameController::class, 'destroy'])->name('games.destroy');
     });
 });

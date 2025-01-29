@@ -80,7 +80,7 @@ return [
         'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
     ],
 
-//    permissions listed
+    //    permissions listed
     'permissions' => [
         'admin' => 'Manage all resources',
         'edit_user' => 'Edit user information',

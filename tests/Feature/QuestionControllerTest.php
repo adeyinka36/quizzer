@@ -7,7 +7,7 @@ use Laravel\Sanctum\Sanctum;
 
 it('Retrieves questions for a a given game', function () {
     Category::factory()->create();
-    $game = Game::factory()->create(['status'=>'in_progress']);
+    $game = Game::factory()->create(['status' => 'in_progress']);
 
     Sanctum::actingAs(
         Player::factory()->create(),
@@ -25,10 +25,10 @@ it('Retrieves questions for a a given game', function () {
                     'options' => [
                         '*' => [
                             'option_text',
-                            'is_correct'
-                        ]
-                    ]
-                ]
+                            'is_correct',
+                        ],
+                    ],
+                ],
             ],
         ]);
 });
