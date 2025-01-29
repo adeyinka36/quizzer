@@ -10,4 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class GamePlayer extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
+
+    protected $table = 'game_players';
+
+    protected $fillable = ['game_id', 'player_id'];
 }

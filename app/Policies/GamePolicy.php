@@ -4,7 +4,16 @@ namespace App\Policies;
 
 use App\Models\Game;
 use App\Models\Player;
+use App\Models\Question;
+use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * @property-read Question $resource
+ *
+ * @mixin Question
+ *
+ * @property Collection<int, Player> $players
+ */
 class GamePolicy
 {
     /**
@@ -21,11 +30,11 @@ class GamePolicy
      */
     public function update(Player $player, Game $game): bool
     {
-        return $game->creator_id === $player->id;
+        return $game->creator_id == $player->id;
     }
 
     public function destroy(Player $player, Game $game): bool
     {
-        return $game->creator_id === $player->id;
+        return $game->creator_id == $player->id;
     }
 }

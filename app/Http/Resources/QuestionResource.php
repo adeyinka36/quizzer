@@ -2,9 +2,19 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Option;
+use App\Models\Question;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property-read Question $resource
+ *
+ * @mixin Question
+ *
+ * @property Collection<int, Option> $options
+ */
 class QuestionResource extends JsonResource
 {
     /**
@@ -14,11 +24,9 @@ class QuestionResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $questions = [
-            'question' => $this->question->question_text,
-            'options' => OptionResource::collection($this->question->options),
+        return [
+            'question' => $this->question_text,
+            'options' => OptionResource::collection($this->options),
         ];
-
-        return $questions;
     }
 }

@@ -22,8 +22,10 @@ class Question extends Model
         return $this->hasMany(Option::class);
     }
 
-    public function game()
+    public function games()
     {
-        return $this->belongsToMany(Game::class);
+        return $this->belongsToMany(Game::class)
+            ->using(GameQuestion::class)
+            ->withTimestamps();
     }
 }

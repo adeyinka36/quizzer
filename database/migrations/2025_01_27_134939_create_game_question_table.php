@@ -13,13 +13,9 @@ return new class extends Migration
     {
         Schema::create('game_question', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('game_id');
-            $table->uuid('question_id');
-            $table->softDeletes();
+            $table->foreignUuid('game_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('question_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
-
-            $table->foreign('game_id')->references('id')->on('games')->onDelete('cascade');
-            $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
         });
     }
 

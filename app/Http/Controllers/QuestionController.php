@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\QuestionResource;
-use App\Models\GameQuestion;
+use App\Models\Game;
 use Illuminate\Http\Request;
 
 class QuestionController extends Controller
@@ -14,17 +14,17 @@ class QuestionController extends Controller
             'game_id' => 'required|uuid|exists:games,id',
         ]);
 
-        $questions = GameQuestion::where('game_id', $validated['game_id'])
-            ->with('question.options')
-            ->get();
+        $gameId = $validated['game_id'];
+
+        $game = Game::withQuestionsAndOptions()->findOrFail($gameId);
 
         return response()->json([
             '_links' => [
                 'self' => [
-                    'href' => 'api/questions/'.$validated['game_id'],
+                    'href' => 'api/questions/'.$game,
                 ],
             ],
-            'data' => QuestionResource::collection($questions),
-        ], 200);
+            'data' => QuestionResource::collection($game->questions),
+        ]);
     }
 }
