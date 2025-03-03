@@ -21,31 +21,46 @@ RUN apt-get update && apt-get install -y \
 # Configure and install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install \
-    gd \
-    pdo \
-    pdo_pgsql \
-    mbstring \
-    zip \
-    exif \
-    pcntl \
-    bcmath \
-    opcache
+       gd \
+       pdo \
+       pdo_pgsql \
+       mbstring \
+       zip \
+       exif \
+       pcntl \
+       bcmath \
+       opcache
 
+# Install Redis extension
+RUN pecl install redis && docker-php-ext-enable redis
 
-# Install Composer
+# Optional: Verify that the Redis extension is installed by listing modules
+RUN php -m | grep redis
+
+# Configure PHP upload limits
+RUN echo "upload_max_filesize = 12M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size = 12M" >> /usr/local/etc/php/conf.d/uploads.ini
+
+# Install Composer from the composer image
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 
+WORKDIR /var/www/
+
 # Copy application files
-COPY . /var/www/html/
+COPY . /var/www/
 
-# Set correct ownership for application files
-RUN chown -R www-data:www-data /var/www/html/
+# Set proper permissions before switching user
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 755 /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Switch to www-data user
+# Configure Git to trust the directory
+RUN git config --global --add safe.directory /var/www
+
+# Switch to www-data user and install composer dependencies
 USER www-data
+RUN composer install --optimize-autoloader --no-dev
 
-# Expose port 9000
 EXPOSE 9000
 
-# Start PHP-FPM
 CMD ["php-fpm"]

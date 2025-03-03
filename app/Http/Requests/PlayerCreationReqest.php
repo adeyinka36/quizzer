@@ -23,11 +23,12 @@ class PlayerCreationReqest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
+            'first_name' => ['nullable', 'string', 'max:255'],
+            'last_name' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:players,email'],
             'username' => ['required', 'string', 'max:255', 'unique:players,username'],
             'password' => ['required', 'string', 'min:5'],
+            'confirm_password' => ['required', 'string', 'same:password'],
         ];
     }
 }

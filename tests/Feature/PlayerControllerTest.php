@@ -11,8 +11,9 @@ it('stores a new player successfully', function () {
         'email' => 'john.doe@example.com',
         'username' => 'johndoe',
         'password' => 'Secret2000###',
+        'confirm_password' => 'Secret2000###',
     ];
-    $response = $this->postJson('/api/players/register', $data);
+    $response = $this->postJson('/api/v1/players/register', $data);
 
     $response->assertStatus(201)
         ->assertJsonStructure([
@@ -43,7 +44,7 @@ it('retrieves a player successfully', function () {
         ['control-own-resources']
     );
 
-    $response = $this->getJson("/api/players/{$player->id}");
+    $response = $this->getJson("/api/v1/players/{$player->id}");
 
     $response->assertStatus(200)
         ->assertJsonStructure([
@@ -58,7 +59,7 @@ it('retrieves a player successfully', function () {
             'token',
         ])
         ->assertJson([
-            '_links' => ['self' => ['href' => "api/players/{$player->id}"]],
+            '_links' => ['self' => ['href' => "api/v1/players/{$player->id}"]],
             'data' => [
                 'id' => $player->id,
                 'first_name' => $player->first_name,
@@ -76,7 +77,7 @@ it('logs in and retrieves a player', function () {
         'password' => 'Secret222###',
     ];
 
-    $response = $this->postJson('/api/players/login', $data);
+    $response = $this->postJson('/api/v1/players/login', $data);
 
     $response->assertStatus(200)
         ->assertJsonStructure([
@@ -91,7 +92,7 @@ it('logs in and retrieves a player', function () {
             'token',
         ])
         ->assertJson([
-            '_links' => ['self' => ['href' => "api/players/{$player->id}"]],
+            '_links' => ['self' => ['href' => "api/v1/players/{$player->id}"]],
             'data' => [
                 'id' => $player->id,
                 'first_name' => $player->first_name,
@@ -122,7 +123,7 @@ it('passes validation when the data is valid', function () {
     ];
 
     // Perform the request
-    $response = $this->putJson("api/players/{$player->id}", $data);
+    $response = $this->putJson("api/v1/players/{$player->id}", $data);
 
     // Assert that the response is successful
     $response->assertStatus(200);
@@ -147,7 +148,7 @@ it('fails validation if the email is already taken by another player', function 
     ];
 
     // Perform the request
-    $response = $this->putJson("api/players/{$player2->id}", $data);
+    $response = $this->putJson("api/v1/players/{$player2->id}", $data);
 
     // Assert validation failure
     $response->assertStatus(422);
@@ -174,7 +175,7 @@ it('fails validation if the current password is incorrect', function () {
     ];
 
     // Perform the request
-    $response = $this->putJson("api/players/{$player->id}", $data);
+    $response = $this->putJson("api/v1/players/{$player->id}", $data);
 
     // Assert validation failure
     $response->assertStatus(422);
@@ -200,7 +201,7 @@ it('fails validation if the password confirmation does not match', function () {
         'password_confirmation' => 'Newpassword12444###', // Does not match password
     ];
 
-    $response = $this->putJson("api/players/{$player->id}", $data);
+    $response = $this->putJson("api/v1/players/{$player->id}", $data);
 
     $response->assertStatus(422);
     $response->assertJsonValidationErrors(['password_confirmation']);
@@ -213,7 +214,7 @@ it('allows an authenticated user to delete a player', function () {
         ['*']
     );
 
-    $response = $this->deleteJson("api/players/{$player->id}");
+    $response = $this->deleteJson("api/v1/players/{$player->id}");
 
     $response->assertStatus(204);
 
@@ -226,7 +227,7 @@ it('allows an authenticated user to delete a player', function () {
 it('prevents an unauthenticated user from deleting a player', function () {
     $player = Player::factory()->create();
 
-    $response = $this->deleteJson("api/players/{$player->id}");
+    $response = $this->deleteJson("api/v1/players/{$player->id}");
 
     $response->assertStatus(401);
 
@@ -239,7 +240,132 @@ it('returns 404 if the player does not exist', function () {
         ['*']
     );
 
-    $response = $this->deleteJson('api/players/no-existent-id');
+    $response = $this->deleteJson('api/v1/players/no-existent-id');
 
     $response->assertStatus(404);
+});
+
+it('sends a password reset email when valid data is provided', function () {
+    // Create a player with known details.
+    $player = Player::factory()->create([
+        'first_name' => 'Alice',
+        'last_name' => 'Smith',
+        'email' => 'alice@example.com',
+    ]);
+
+    $data = [
+        'first_name' => 'Alice',
+        'last_name' => 'Smith',
+        'email' => 'alice@example.com',
+    ];
+
+    $response = $this->postJson('/api/v1/players/request-password-reset-token', $data);
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'message' => 'Password reset email sent',
+        ]);
+});
+
+it('returns error when an invalid email is provided for token request', function () {
+    $data = [
+        'first_name' => 'Alice',
+        'last_name' => 'Smith',
+        'email' => 'nonexistent@example.com',
+    ];
+
+    $response = $this->postJson('/api/v1/players/request-password-reset-token', $data);
+
+    $response->assertStatus(404)
+        ->assertJson([
+            'error' => 'Invalid email provided',
+        ]);
+});
+
+it('returns error when provided names do not match for token request', function () {
+    // Create a player with known details.
+    $player = Player::factory()->create([
+        'first_name' => 'Alice',
+        'last_name' => 'Smith',
+        'email' => 'alice@example.com',
+    ]);
+
+    $data = [
+        'first_name' => 'Alicia', // Mismatch here
+        'last_name' => 'Smith',
+        'email' => 'alice@example.com',
+    ];
+
+    $response = $this->postJson('/api/v1/players/request-password-reset-token', $data);
+
+    $response->assertStatus(401)
+        ->assertJson([
+            'error' => 'Invalid names provided',
+        ]);
+});
+
+// Tests for resetPassword
+
+it('returns error if passwords do not match during reset', function () {
+    // Create a player with a valid token.
+    $player = Player::factory()->create([
+        'password_reset_token' => 'valid-token',
+    ]);
+
+    $data = [
+        'token' => 'valid-token',
+        'password' => 'NewPassword123',
+        'confirm_password' => 'MismatchPassword123',
+    ];
+
+    $response = $this->postJson('/api/v1/players/reset-password', $data);
+
+    $response->assertStatus(404)
+        ->assertJson([
+            'error' => 'Passwords do not match',
+        ]);
+});
+
+it('updates the password successfully when valid token and matching passwords are provided', function () {
+    $token = 'valid-token';
+    $password = 'NewPassword123';
+    $player = Player::factory()->create([
+        'password_reset_token' => $token,
+    ]);
+
+    $data = [
+        'token' => $token,
+        'password' => 'NewPassword123',
+        'confirm_password' => 'NewPassword123',
+    ];
+
+    $response = $this->postJson('/api/v1/players/reset-password', $data);
+    $response->assertStatus(200)
+        ->assertJson([
+            'message' => 'Password updated',
+        ]);
+
+    $player = Player::find($player->id);
+    expect(Hash::check($password, $player->password))->toBeTrue();
+});
+
+it('returns error when token is invalid during password reset', function () {
+    $token = 'invalid-token';
+    // Create a player with a different token.
+    $player = Player::factory()->create([
+        'password_reset_token' => 'valid-token',
+    ]);
+
+    $data = [
+        'token' => $token,
+        'password' => 'NewPassword123',
+        'confirm_password' => 'NewPassword123',
+    ];
+
+    $response = $this->postJson('/api/v1/players/reset-password', $data);
+
+    $response->assertStatus(404)
+        ->assertJson([
+            'error' => 'Invalid token',
+        ]);
 });

@@ -6,11 +6,13 @@ use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\QuestionController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('players')->group(function () {
+Route::prefix('v1/players')->group(function () {
 
     // Public routes
     Route::post('/register', [PlayerController::class, 'register'])->name('players.register'); // Register
     Route::post('/login', [PlayerController::class, 'login'])->name('players.login'); // Register
+    Route::post('request-password-reset-token', [PlayerController::class, 'requestPasswordResetToken'])->name('players.request-password-reset');
+    Route::post('reset-password', [PlayerController::class, 'resetPassword'])->name('players.reset-password');
 
     Route::middleware(['auth:sanctum', 'ability:control-own-resources'])->group(function () {
         Route::put('/{player}', [PlayerController::class, 'update'])->name('players.update'); // Update player
