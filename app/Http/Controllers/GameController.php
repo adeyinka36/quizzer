@@ -16,7 +16,7 @@ class GameController extends Controller
         return response()->json([
             '_links' => [
                 'self' => [
-                    'href' => 'api/games/'.$game->id,
+                    'href' => 'api/v1/games/'.$game->id,
                 ],
             ],
             'data' => new GameResource($game),
@@ -31,7 +31,7 @@ class GameController extends Controller
         return response()->json([
             '_links' => [
                 'self' => [
-                    'href' => 'api/games/'.$game->id,
+                    'href' => 'api/v1/games/'.$game->id,
                 ],
             ],
             'data' => new GameResource($game),
@@ -43,7 +43,7 @@ class GameController extends Controller
         return response()->json([
             '_links' => [
                 'self' => [
-                    'href' => 'api/games/'.$game->id,
+                    'href' => 'api/v1/games/'.$game->id,
                 ],
             ],
             'data' => new GameResource($game),

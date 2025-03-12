@@ -15,17 +15,13 @@ return new class extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->text('name')->unique()->nullable();
-            $table->enum('status', ['in_progress', 'completed', 'cancelled', 'hold'])->default('hold');
+            $table->enum('status', ['IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'HOLD'])->default('HOLD');
             $table->dateTime('start_date_time')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->uuid('monetization_id')->nullable();
-            $table->uuid('winner_id')->nullable();
-            $table->uuid('creator_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('monetization_id')->references('id')->on('monetizations')->onDelete('cascade');
-            $table->foreign('winner_id')->references('id')->on('players')->onDelete('cascade');
-            $table->foreign('creator_id')->references('id')->on('players')->onDelete('cascade');
+            $table->foreignUuid('winner_id')->nullable()->constrained('players')->noActionOnDelete();
+            $table->foreignUuid('creator_id')->nullable()->constrained('players')->noActionOnDelete();
         });
     }
 

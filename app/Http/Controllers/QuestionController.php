@@ -21,7 +21,7 @@ class QuestionController extends Controller
         return response()->json([
             '_links' => [
                 'self' => [
-                    'href' => 'api/questions/'.$game,
+                    'href' => 'api/v1/questions/'.$game,
                 ],
             ],
             'data' => QuestionResource::collection($game->questions),

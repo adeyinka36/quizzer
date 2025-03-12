@@ -21,7 +21,7 @@ class GameFactory extends Factory
      */
     public function definition(): array
     {
-        $statuses = ['completed', 'in_progress', 'cancelled', 'hold'];
+        $statuses = ['COMPLETED', 'IN_PROGRESS', 'CANCELLED', 'HOLD'];
 
         return [
             'status' => $statuses[random_int(0, 3)],

@@ -27,7 +27,7 @@ it('Can create a new game and dispatch GameCreated event', function () {
         'creator_id' => $player->id,
     ];
 
-    $response = $this->postJson('/api/games', $data);
+    $response = $this->postJson('/api/v1/games', $data);
 
     Event::assertDispatched(GameCreated::class);
 
@@ -61,7 +61,7 @@ it('can update a game', function () {
         'start_date_time' => $newDateTime,
     ];
 
-    $response = $this->putJson('/api/games/'.$game->id, $data);
+    $response = $this->putJson('/api/v1/games/'.$game->id, $data);
 
     $response->assertStatus(200);
 });
@@ -77,7 +77,7 @@ it('can show a game', function () {
         ['can-view-questions', 'can-view-game']
     );
 
-    $response = $this->getJson('/api/games/'.$game->id);
+    $response = $this->getJson('/api/v1/games/'.$game->id);
 
     $response->assertStatus(200);
 });
@@ -94,7 +94,7 @@ it('can cancel a game', function () {
         ['control-own-resources']
     );
 
-    $response = $this->deleteJson('/api/games/'.$game->id);
+    $response = $this->deleteJson('/api/v1/games/'.$game->id);
 
     $response->assertStatus(204);
 });

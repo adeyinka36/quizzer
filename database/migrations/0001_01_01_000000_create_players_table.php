@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('password');
             $table->string('password_reset_token')->nullable();
             $table->dateTime('password_reset_token_created_at')->nullable();
+            $table->integer('zivas')->default(0);
+            $table->boolean('is_subscribed')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });

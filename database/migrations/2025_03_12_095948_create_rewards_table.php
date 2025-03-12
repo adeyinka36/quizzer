@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('rewards', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('category_name')->unique();
-            $table->string('group_name'); //this could indicate a custom or created group
+            $table->integer('amount');
+            $table->enum('currency', ['GBP'])->default('GBP');
+            $table->enum('form', ['AMAZON_GIFT_CARD'])->default('zivas');
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreignUuid('player_id')->references('id')->on('players')->onDelete('cascade');
         });
     }
 
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('rewards');
     }
 };
