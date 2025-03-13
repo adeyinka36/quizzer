@@ -27,6 +27,7 @@ class GameResource extends JsonResource
             'winner_id' => $this->winner_id,
             'status' => $this->status,
             'creator_id' => $this->creator_id,
+            'topic_id' => $this->topic_id,
         ];
     }
 }

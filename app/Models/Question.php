@@ -12,6 +12,10 @@ class Question extends Model
     /** @use HasFactory<\Database\Factories\QuestionFactory> */
     use HasFactory, HasUuids, SoftDeletes;
 
+    protected $casts = [
+        'options' => 'array',
+    ];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -26,6 +30,13 @@ class Question extends Model
     {
         return $this->belongsToMany(Game::class)
             ->using(GameQuestion::class)
+            ->withTimestamps();
+    }
+
+    public function topics()
+    {
+        return $this->belongsToMany(Topic::class)
+            ->using(Topic::class)
             ->withTimestamps();
     }
 }

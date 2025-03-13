@@ -21,7 +21,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreignUuid('winner_id')->nullable()->constrained('players')->noActionOnDelete();
-            $table->foreignUuid('creator_id')->nullable()->constrained('players')->noActionOnDelete();
+            $table->foreignUuid('creator_id')->constrained('players')->noActionOnDelete();
+            $table->foreignUuid('topic_id')->references('id')->on('topics')->nullOnDelete();
         });
     }
 

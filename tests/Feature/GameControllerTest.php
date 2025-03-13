@@ -3,7 +3,8 @@
 use App\Events\GameCreated;
 use App\Models\Game;
 use App\Models\Player;
-use Database\Seeders\CategorySeeder;
+
+use App\Models\Topic;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
@@ -21,10 +22,13 @@ it('Can create a new game and dispatch GameCreated event', function () {
     );
 
     $startDateTime = (new \DateTimeImmutable)->format('Y-m-d H:i:s');
+    $topic = Topic::factory()->create();
 
     $data = [
         'start_date_time' => $startDateTime,
         'creator_id' => $player->id,
+        'topic_id' => $topic->id,
+
     ];
 
     $response = $this->postJson('/api/v1/games', $data);
@@ -41,12 +45,12 @@ it('Can create a new game and dispatch GameCreated event', function () {
                 'creator_id',
                 'winner_id',
                 'status',
+                'topic_id',
             ],
         ]);
 });
 
 it('can update a game', function () {
-    $this->seed(CategorySeeder::class);
     $player = Player::factory()->create();
     $game = Game::factory()->create(['creator_id' => $player->id]);
     Sanctum::actingAs(
@@ -67,9 +71,8 @@ it('can update a game', function () {
 });
 
 it('can show a game', function () {
-    $this->seed(CategorySeeder::class);
     $player = Player::factory()->create();
-    $game = Game::factory()->create();
+    $game = Game::factory()->create(['creator_id' => $player->id]);
 
     $game->players()->attach($player, ['id' => Str::uuid()]);
     Sanctum::actingAs(
@@ -83,7 +86,6 @@ it('can show a game', function () {
 });
 
 it('can cancel a game', function () {
-    $this->seed(CategorySeeder::class);
     $player = Player::factory()->create();
     $game = Game::factory()->create([
         'creator_id' => $player->id,

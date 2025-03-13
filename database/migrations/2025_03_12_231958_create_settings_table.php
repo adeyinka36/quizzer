@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('monetizations', function (Blueprint $table) {
+        Schema::create('settings', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->enum('type', ['card']);
-            $table->unsignedBigInteger('total_amount');
-            $table->softDeletes();
+            $table->boolean('show_notifications')->default(true);
+            $table->boolean('sound_on')->default(true);
+            $table->boolean('dark_mode')->default(false);
             $table->timestamps();
+
+            $table->foreignUuid('player_id')->references('id')->on('players')->onDelete('cascade');
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('monetizations');
+        Schema::dropIfExists('settings');
     }
 };

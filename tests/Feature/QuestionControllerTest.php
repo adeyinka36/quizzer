@@ -3,31 +3,37 @@
 use App\Models\Category;
 use App\Models\Game;
 use App\Models\Player;
+use App\Models\Question;
+use App\Models\Topic;
 use Laravel\Sanctum\Sanctum;
 
-it('Retrieves questions for a a given game', function () {
-    Category::factory()->create();
-    $game = Game::factory()->create(['status' => 'IN_PROGRESS']);
-
+it('Retrieves questions for a a given topic', function () {
     Sanctum::actingAs(
-        Player::factory()->create(),
+        $player = Player::factory()->create(),
         ['can-view-questions']
     );
+    $topic = Topic::factory()->create();
+     Question::factory()->count(10)->create([
+        'topic_id' => $topic->id,
+    ]);
 
-    $response = $this->getJson('api/v1/questions?game_id='.$game->id);
+    $response = $this->getJson('api/v1/questions?topic_id='.$topic->id);
 
     $response->assertStatus(200)
         ->assertJsonStructure([
             '_links' => ['self' => ['href']],
             'data' => [
                 '*' => [
-                    'question',
+                    'id',
+                    'question_text',
                     'options' => [
-                        '*' => [
-                            'option_text',
-                            'is_correct',
-                        ],
+                            'A',
+                            'B',
+                            'C',
+                            'D',
                     ],
+                    'answer',
+                    'topic_id'
                 ],
             ],
         ]);

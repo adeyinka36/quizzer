@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Monetization>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Topic>
  */
-class MonetizationFactory extends Factory
+class TopicFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,8 @@ class MonetizationFactory extends Factory
     public function definition(): array
     {
         return [
-
+            'title' => $this->faker->word,
+            'description' => $this->faker->sentence,
         ];
     }
 }

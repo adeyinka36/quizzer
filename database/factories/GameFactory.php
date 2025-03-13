@@ -25,19 +25,7 @@ class GameFactory extends Factory
 
         return [
             'status' => $statuses[random_int(0, 3)],
+            'topic_id' => Question::factory()->create()->topic_id,
         ];
-    }
-
-    //       create 10 questions for each game
-    public function configure(): static
-    {
-        return $this->afterCreating(function (Game $game) {
-            $questions = Question::factory()->count(10)->create();
-            foreach ($questions as $question) {
-                $game->questions()->attach($question->id, [
-                    'id' => \Illuminate\Support\Str::uuid(),
-                ]);
-            }
-        });
     }
 }

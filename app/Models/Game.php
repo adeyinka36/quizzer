@@ -22,12 +22,9 @@ class Game extends Model
         'creator_id',
         'monetization_id',
         'start_date_time',
+        'topic_id',
     ];
 
-    public function monetization()
-    {
-        return $this->belongsTo(Monetization::class);
-    }
 
     public function winner()
     {
@@ -39,20 +36,21 @@ class Game extends Model
         return $this->belongsToMany(Player::class);
     }
 
-    public function questions()
-    {
-        return $this->belongsToMany(Question::class)
-            ->using(GameQuestion::class)
-            ->withTimestamps();
-    }
 
     public function creator()
     {
         return $this->belongsTo(Player::class, 'creator_id', 'id');
     }
 
+    public function topic()
+    {
+        return $this->belongsTo(Topic::class);
+    }
+
     public function scopeWithQuestionsAndOptions($query)
     {
         return $query->with('questions.options');
     }
+
+
 }

@@ -24,6 +24,8 @@ it('stores a new player successfully', function () {
                 'last_name',
                 'email',
                 'username',
+                'zivas',
+                'is_subscribed',
             ],
             'token',
         ]);
@@ -55,6 +57,8 @@ it('retrieves a player successfully', function () {
                 'last_name',
                 'email',
                 'username',
+                'zivas',
+                'is_subscribed',
             ],
             'token',
         ])
@@ -66,6 +70,8 @@ it('retrieves a player successfully', function () {
                 'last_name' => $player->last_name,
                 'email' => $player->email,
                 'username' => $player->username,
+                'zivas' => $player->zivas,
+                'is_subscribed' => $player->is_subscribed,
             ],
         ]);
 });
@@ -88,6 +94,8 @@ it('logs in and retrieves a player', function () {
                 'last_name',
                 'email',
                 'username',
+                'zivas',
+                'is_subscribed',
             ],
             'token',
         ])
@@ -99,6 +107,8 @@ it('logs in and retrieves a player', function () {
                 'last_name' => $player->last_name,
                 'email' => $player->email,
                 'username' => $player->username,
+                'zivas' => $player->zivas,
+                'is_subscribed' => $player->is_subscribed,
             ],
         ]);
 });

@@ -6,14 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.-
-     */
     public function up(): void
     {
         Schema::create('memberships', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->enum('membership_type', ['FREE', 'STANDARD'])->default('FREE');
+            $table->enum('membership_type', ['FREE', 'PREMIUM'])->default('FREE');
+
+            $table->integer('price_cents')->default(0);
+
+            $table->enum('duration', ['0', '1_MONTH', '3_MONTHS', '6_MONTHS', '1_YEAR'])->default('0');
+
+            $table->timestampTz('start_date')->nullable();
+            $table->timestampTz('end_date')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
@@ -21,9 +25,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('memberships');

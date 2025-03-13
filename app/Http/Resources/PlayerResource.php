@@ -26,6 +26,8 @@ class PlayerResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'username' => $this->username,
+            'zivas' => $this->zivas,
+            'is_subscribed' => $this->is_subscribed,
         ];
     }
 }

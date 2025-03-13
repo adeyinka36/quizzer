@@ -14,11 +14,18 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->text('question_text');
-            $table->uuid('category_id');
+            $table->json('options');
+            $table->enum('answer', ['A', 'B', 'C', 'D']);
+            $table->boolean('is_custom')->default(false);
+            $table->boolean('is_active')->default(true);
+            $table->dateTime('made_inactive_at')->nullable();
+
+
+
+            $table->foreignUuid('topic_id')->references('id')->on('topics')->nullOnDelete();
+
             $table->softDeletes();
             $table->timestamps();
-
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 

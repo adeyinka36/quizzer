@@ -26,6 +26,7 @@ class GameCreateUpdateRequest extends FormRequest
             'start_date_time' => 'required|date',
             'monetization_id' => 'nullable|uuid|exists:monetizations,id',
             'creator_id' => 'nullable|uuid|exists:players,id',
+            'topic_id' => 'nullable|uuid|exists:topics,id',
         ];
     }
 
@@ -37,6 +38,7 @@ class GameCreateUpdateRequest extends FormRequest
             'start_time.date' => 'Start time must be a valid date.',
             'monetization_id.uuid' => 'Monetization ID must be a valid UUID.',
             'creator_id.uuid' => 'Creator ID must be a valid UUID.',
+            'topic_id.uuid' => 'Topic ID must be a valid UUID.',
         ];
     }
 }
