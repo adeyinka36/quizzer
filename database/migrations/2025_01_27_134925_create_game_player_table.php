@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('game_player', function (Blueprint $table) {
-            $table->uuid('id')->primary();
             $table->uuid('game_id');
             $table->uuid('player_id');
             $table->boolean('accepted_game_invite')->default(false);
@@ -21,6 +20,8 @@ return new class extends Migration
 
             $table->foreign('game_id')->references('id')->on('games')->onDelete('cascade');
             $table->foreign('player_id')->references('id')->on('players')->onDelete('cascade');
+
+            $table->primary(['game_id', 'player_id']);
         });
     }
 

@@ -95,7 +95,7 @@ it('logs in and retrieves a player', function () {
                 'email',
                 'username',
                 'zivas',
-                'is_subscribed',
+                'is_member',
             ],
             'token',
         ])
@@ -108,7 +108,7 @@ it('logs in and retrieves a player', function () {
                 'email' => $player->email,
                 'username' => $player->username,
                 'zivas' => $player->zivas,
-                'is_subscribed' => $player->is_subscribed,
+                'is_member' => $player->is_member,
             ],
         ]);
 });

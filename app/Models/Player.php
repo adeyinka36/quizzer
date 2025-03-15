@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Jobs\SendResetPasswordToken;
 use Database\Factories\PlayerFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -31,6 +32,7 @@ class Player extends Authenticatable
         'password',
         'password_reset_token',
         'password_reset_token_created_at',
+        'is_member',
     ];
 
     /**
@@ -57,12 +59,17 @@ class Player extends Authenticatable
 
     public function games()
     {
-        return $this->hasMany(Game::class);
+        return $this->belongsToMany(Game::class);
     }
 
-    public function monetization()
+    public function memberships(): BelongsToMany
     {
-        return $this->belongsToMany(Monetization::class);
+        return $this->belongsToMany(Membership::class);
+    }
+
+    public function notifications(): hasMany
+    {
+        return $this->hasMany(Notification::class);
     }
 
     public function getPermissions() {}
@@ -94,5 +101,46 @@ class Player extends Authenticatable
             'password_reset_token_created_at' => now(),
         ]);
         SendResetPasswordToken::dispatch($this, $token);
+    }
+
+    public function getStats(): array
+    {
+        $games_played = $this->games()->count();
+        $games_won = $this->games()->where('winner_id', $this->id)->count();
+        $games_drawn = $this->games()->where([
+            'winner_id' => null,
+            'status' => 'COMPLETED',
+        ])->count();
+        $games_lost = $games_played - ($games_won + $games_drawn);
+        $win_rate = $games_played > 0 ? ($games_won / $games_played) * 100 : 0;
+        $zivas = $this->zivas;
+
+        $zivasCanBeRedeemedOn = $this->calculateZivaRedeemDate();
+
+
+        return [
+            'games_played' => $games_played,
+            'games_won' => $games_won,
+            'games_lost' => $games_lost,
+            'win_rate' => $win_rate,
+            'games_drawn' => $games_drawn,
+            'zivas' => $zivas,
+            'zivas_redeemable_date' => $zivasCanBeRedeemedOn,
+        ];
+    }
+
+
+    public function calculateZivaRedeemDate()
+    {
+        $memberShipStartDate = $this->membership?->start_date;
+
+        //zivas can  be redeeemed only when the membership has been active for 30 or more days.
+        //if the membership has been active for less than 30 days, the zivas can be redeemed after 30 days of the membership start date.
+        //zivas need to be 1000 to be redeemed for a £10 gift card.
+        if($this->zivas < 1000 || !$memberShipStartDate){
+            return null;
+        }
+
+        return $memberShipStartDate->addDays(30)->format('Y-m-d');
     }
 }

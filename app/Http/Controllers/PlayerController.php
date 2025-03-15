@@ -86,14 +86,25 @@ class PlayerController extends Controller
      */
     public function update(PlayerUpdateRequest $request, Player $player)
     {
-        // Update player and return the updated
-        $player->update([
+//        //check curren_password is correct
+//        if (!Hash::check($request->input('current_password'), $player->password)) {
+//            return response()->json([
+//                'message' => 'Invalid current password',
+//            ], 401);
+//        }
+
+        $fieldsToUpdate = [
             'first_name' => $request->input('first_name'),
             'last_name' => $request->input('last_name'),
             'email' => $request->input('email'),
             'username' => $request->input('username'),
-            'password' => Hash::make($request->input('password')),
-        ]);
+        ];
+
+        if($request->input('new_password')) {
+            $fieldsToUpdate['password'] = Hash::make($request->input('new_password'));
+        }
+        // Update player and return the updated
+        $player->update($fieldsToUpdate);
 
         return response()->json([
             '_links' => [

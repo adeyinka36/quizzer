@@ -1,5 +1,6 @@
 <?php
 
+use App\enums\NotificationType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,22 +14,10 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->enum('type',['email', 'sms', 'push'])->default('push');
+            $table->enum('type',[NotificationType::SMS->value, NotificationType::EMAIL->value, NotificationType::PUSH->value])->default(NotificationType::PUSH->value);
             $table->string('message');
             $table->boolean('is_read')->default(false);
-            $table->enum('title', [
-                    'GIFT_CARD_AWARDED',
-                    'GAME_INVITATION',
-                    'ZIVAS_UPDATED',
-                    'FRIEND_REQUEST',
-                    'FRIEND_REQUEST_ACCEPTED',
-                    'FRIEND_REQUEST_REJECTED',
-                    'GAME_INVITATION_ACCEPTED',
-                    'GAME_INVITATION_REJECTED',
-                    'GAME_CANCELLED',
-                    'GAME_ENDED',
-                ]
-            )->default('info');
+            $table->string('title');
 
             $table->softDeletes();
             $table->timestamps();

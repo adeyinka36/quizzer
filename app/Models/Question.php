@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\ActiveQuestionScope;
+use Database\Factories\QuestionFactory;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ScopedBy([ActiveQuestionScope::class])]
 class Question extends Model
 {
-    /** @use HasFactory<\Database\Factories\QuestionFactory> */
+    /** @use HasFactory<QuestionFactory> */
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $casts = [

@@ -74,7 +74,7 @@ it('can show a game', function () {
     $player = Player::factory()->create();
     $game = Game::factory()->create(['creator_id' => $player->id]);
 
-    $game->players()->attach($player, ['id' => Str::uuid()]);
+    $game->players()->attach($player);
     Sanctum::actingAs(
         $player,
         ['can-view-questions', 'can-view-game']

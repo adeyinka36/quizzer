@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Game;
+use App\Models\Player;
 use App\Models\Question;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Random\RandomException;
@@ -26,6 +27,7 @@ class GameFactory extends Factory
         return [
             'status' => $statuses[random_int(0, 3)],
             'topic_id' => Question::factory()->create()->topic_id,
+            'creator_id' => Player::inRandomOrder()->first()->id,
         ];
     }
 }

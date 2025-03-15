@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreTopicRequest;
-use App\Http\Requests\UpdateTopicRequest;
+use App\Http\Resources\TopicResource;
 use App\Models\Topic;
 
 class TopicController extends Controller
@@ -13,54 +12,16 @@ class TopicController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $topics = Topic::where('is_custom', false)->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreTopicRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Topic $topic)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Topic $topic)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateTopicRequest $request, Topic $topic)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Topic $topic)
-    {
-        //
+        return response()->json([
+            '_links' => [
+                'self' => [
+                    'href' => 'api/v1/topics/',
+                ],
+            ],
+            'data' => new TopicResource($topics),
+        ], 201);
     }
 }

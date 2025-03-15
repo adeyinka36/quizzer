@@ -23,6 +23,8 @@ class Game extends Model
         'monetization_id',
         'start_date_time',
         'topic_id',
+        'winner_id',
+        'status',
     ];
 
 
