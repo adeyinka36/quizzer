@@ -2,8 +2,10 @@
 
 use App\enums\PlayerPermission;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\StatsController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -15,6 +17,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/login', [PlayerController::class, 'login'])->name('players.login'); // Login
         Route::post('request-password-reset-token', [PlayerController::class, 'requestPasswordResetToken'])->name('players.request-password-reset');
         Route::post('reset-password', [PlayerController::class, 'resetPassword'])->name('players.reset-password');
+
+        Route::get('/{player}/stats', [StatsController::class, 'show'])->name('players.stats');
 
         Route::middleware(['auth:sanctum', 'ability:control-own-resources'])->group(function () {
             Route::put('/{player}', [PlayerController::class, 'update'])->name('players.update'); // Update player
@@ -52,4 +56,7 @@ Route::prefix('v1')->group(function () {
             Route::delete('/{game}', [GameController::class, 'destroy'])->name('games.destroy');
         });
     });
+
+    Route::get('/stats/{player}', [StatsController::class, 'show'])->name('stats.show');
+    Route::get('/notifications/{player}', [NotificationController::class, 'show'])->name('notifications.index');
 });
