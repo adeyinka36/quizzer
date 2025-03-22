@@ -20,15 +20,6 @@ class Question extends Model
         'options' => 'array',
     ];
 
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-
-    public function options()
-    {
-        return $this->hasMany(Option::class);
-    }
 
     public function games()
     {

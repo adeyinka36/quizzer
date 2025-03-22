@@ -17,11 +17,10 @@ class TopicController extends Controller
 
         return response()->json([
             '_links' => [
-                'self' => [
-                    'href' => 'api/v1/topics/',
-                ],
+                'self'=>'api/v1/topics/',
             ],
-            'data' => new TopicResource($topics),
-        ], 201);
+            'data' =>  TopicResource::collection($topics),
+        ], 200);
     }
+
 }

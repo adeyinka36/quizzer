@@ -20,8 +20,6 @@ class Game extends Model
     protected $fillable = [
         'name',
         'creator_id',
-        'monetization_id',
-        'start_date_time',
         'topic_id',
         'winner_id',
         'status',

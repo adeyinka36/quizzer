@@ -5,13 +5,50 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PlayerCreationReqest;
 use App\Http\Requests\PlayerUpdateRequest;
 use App\Http\Resources\PlayerResource;
+use App\Interfaces\UploadImageInterface;
 use App\Models\Player;
+use App\Services\UploadImageToS3;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+
 
 class PlayerController extends Controller
 {
+    public function index(Request $request)
+    {
+        // Start with a base query
+        $query = Player::query();
+
+        if ($request->filled('q')) {
+            // Convert the user input to lowercase once
+            $lowerQ = mb_strtolower($request->q);
+
+            $query->where(function ($subquery) use ($lowerQ) {
+                // Note: Make sure your database supports LOWER() or an equivalent function
+                $subquery->whereRaw('LOWER(username) LIKE ?', [$lowerQ . '%']);
+            });
+        }
+
+
+        $players = $query->paginate(20)->appends($request->only('q'));
+
+        $data = [
+            '_links' => [
+                '_self'     => $players->url($players->currentPage()),
+                'next'      => $players->hasMorePages() ? $players->nextPageUrl() : null,
+                'previous'  => $players->onFirstPage() ? null : $players->previousPageUrl(),
+            ],
+            'count' => $players->count(),
+            'total' => $players->total(),
+            'data'  => PlayerResource::collection($players->items()),
+        ];
+
+        return response()->json($data, 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -194,5 +231,31 @@ class PlayerController extends Controller
         return response()->json([
             'message' => 'Password updated',
         ]);
+    }
+
+    public function imageUpload(Request $request,UploadImageInterface $fileUploader, Player $player)
+    {
+        if (! $request->hasFile('file')) {
+            return response()->json(['error' => 'No file uploaded.'], 400);
+        }
+
+        $path = $fileUploader->uploadImage($request->file('file'));
+
+        $url = Storage::disk('s3')->url($path);
+
+        $player->update([
+            'avatar' => $url
+        ]);
+
+        return response()->json([
+            '_links' => [
+                'self' => [
+                    'href' => 'api/v1/players/image-upload/'.$player->id,
+                ],
+            ],
+            'data' => [
+                'url' => $url,
+            ],
+        ], 201);
     }
 }

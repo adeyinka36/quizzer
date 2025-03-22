@@ -22,10 +22,10 @@ class GameFactory extends Factory
      */
     public function definition(): array
     {
-        $statuses = ['COMPLETED', 'IN_PROGRESS', 'CANCELLED', 'HOLD'];
+        $statuses = ['COMPLETED', 'IN_PROGRESS', 'CANCELLED'];
 
         return [
-            'status' => $statuses[random_int(0, 3)],
+            'status' => $statuses[random_int(0, 2)],
             'topic_id' => Question::factory()->create()->topic_id,
             'creator_id' => Player::inRandomOrder()->first()->id,
         ];

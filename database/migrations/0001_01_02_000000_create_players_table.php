@@ -22,6 +22,7 @@ return new class extends Migration
             $table->dateTime('password_reset_token_created_at')->nullable();
             $table->integer('zivas')->default(0);
             $table->boolean('is_member')->default(false);
+            $table->string('avatar')->nullable();
 
             $table->softDeletes();
             $table->timestamps();

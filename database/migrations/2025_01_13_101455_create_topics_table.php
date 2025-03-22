@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean('is_custom')->default(false);
             $table->boolean('is_active')->default(true);
 
+            $table->foreignUuid('creator_id')->constrained('players')->noActionOnDelete();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -33,6 +33,7 @@ class Player extends Authenticatable
         'password_reset_token',
         'password_reset_token_created_at',
         'is_member',
+        'avatar',
     ];
 
     /**

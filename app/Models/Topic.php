@@ -11,6 +11,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Topic extends Model
 {
+    protected $fillable = [
+        'description',
+        'image',
+        'is_custom',
+        'title',
+        'creator_id'
+    ];
     /** @use HasFactory<TopicFactory> */
     use HasFactory, HasUuids, SoftDeletes;
 
@@ -23,5 +30,10 @@ class Topic extends Model
     public function games(): HasMany
     {
         return $this->hasMany(Game::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(Player::class, 'created_by', 'id');
     }
 }

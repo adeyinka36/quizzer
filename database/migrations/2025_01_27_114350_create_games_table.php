@@ -14,9 +14,8 @@ return new class extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->text('name')->unique()->nullable();
-            $table->enum('status', ['IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'HOLD'])->default('HOLD');
-            $table->dateTime('start_date_time')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->text('name')->nullable();
+            $table->enum('status', ['IN_PROGRESS', 'COMPLETED', 'CANCELLED'])->default('IN_PROGRESS');
             $table->softDeletes();
             $table->timestamps();
 

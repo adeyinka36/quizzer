@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Player;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +20,10 @@ class TopicFactory extends Factory
         return [
             'title' => $this->faker->word,
             'description' => $this->faker->sentence,
+            'image' => $this->faker->imageUrl(),
+            'is_custom' => $this->faker->boolean,
+            'creator_id' => Player::inRandomOrder()->first()->id,
+            'is_active' => true,
         ];
     }
 }

@@ -1,11 +1,13 @@
 <?php
 
 use App\enums\PlayerPermission;
+use App\Http\Controllers\CustomTopicController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\TopicController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -21,9 +23,12 @@ Route::prefix('v1')->group(function () {
         Route::get('/{player}/stats', [StatsController::class, 'show'])->name('players.stats');
 
         Route::middleware(['auth:sanctum', 'ability:control-own-resources'])->group(function () {
+            Route::post( 'image-upload/{player}', [PlayerController::class, 'imageUpload'])->name('players.image-upload');
             Route::put('/{player}', [PlayerController::class, 'update'])->name('players.update'); // Update player
             Route::delete('/{player}', [PlayerController::class, 'destroy'])->name('players.destroy'); // Delete player
             Route::get('/{player}', [PlayerController::class, 'show'])->name('players.show');
+            Route::get('/', [PlayerController::class, 'index'])->name('players.index');
+
         });
 
         Route::resource('/', PlayerController::class)->except([
@@ -59,4 +64,6 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/stats/{player}', [StatsController::class, 'show'])->name('stats.show');
     Route::get('/notifications/{player}', [NotificationController::class, 'show'])->name('notifications.index');
+    Route::get('/topics/custom', [CustomTopicController::class, 'index'])->name('custom-topics.index');
+    Route::get('/topics', [TopicController::class, 'index'])->name('topics.index');
 });
