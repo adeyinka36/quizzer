@@ -6,6 +6,7 @@ use App\Models\Game;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class GameCreated
 {
@@ -16,6 +17,6 @@ class GameCreated
      */
     public function __construct(public Game $game)
     {
-        //
+        Log::info('GameCreated event triggered');
     }
 }

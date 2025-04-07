@@ -21,8 +21,10 @@ return new class extends Migration
             $table->string('password_reset_token')->nullable();
             $table->dateTime('password_reset_token_created_at')->nullable();
             $table->integer('zivas')->default(0);
-            $table->boolean('is_member')->default(false);
-            $table->string('avatar')->nullable();
+            $table->boolean('is_member')->default(false); //make this an attribute in the model returned in the resource
+            $table->string('avatar')->default("https://images.unsplash.com/photo-1511367461989-f85a21fda167?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+            $table->string('remember_token')->nullable();
+            $table->string('push_token')->nullable();
 
             $table->softDeletes();
             $table->timestamps();

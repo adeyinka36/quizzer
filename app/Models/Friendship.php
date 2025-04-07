@@ -30,33 +30,19 @@ class Friendship extends Model
         return $this->belongsTo(Player::class, 'addressee_id');
     }
 
-    public function scopeAccepted($query)
-    {
-        return $query->where('status', 'accepted');
-    }
-
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
-    }
-
     public function friendshipsSent(): HasMany
     {
-        return $this->hasMany(Friendship::class, 'requester_id')->where('status', 'accepted');
+        return $this->hasMany(Friendship::class, 'requester_id')->where('status', 'sent');
     }
 
     public function friendshipsReceived(): HasMany
     {
-        return $this->hasMany(Friendship::class, 'addressee_id')->where('status', 'accepted');
+        return $this->hasMany(Friendship::class, 'addressee_id')->where('status', 'received');
     }
 
-    public function friends()
+    public function friends(): HasMany
     {
-        $sentFriendIds = $this->friendshipsSent->pluck('addressee_id')->toArray();
-        $receivedFriendIds = $this->friendshipsReceived->pluck('requester_id')->toArray();
-        $friendIds = array_unique(array_merge($sentFriendIds, $receivedFriendIds));
-
-        return Player::whereIn('id', $friendIds)->get();
+        return $this->hasMany(Friendship::class)->where('status', 'accepted');
     }
 
 }

@@ -18,7 +18,7 @@ class TopicFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->word,
+            'title' => $this->faker->unique()->word,
             'description' => $this->faker->sentence,
             'image' => $this->faker->imageUrl(),
             'is_custom' => $this->faker->boolean,

@@ -18,6 +18,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
        $this->app->bind(UploadImageInterface::class, UploadImageToS3::class);
+       $this->app->singleton('expo_push_notification', function () {
+           return new \App\Services\Notifications\SendNotificationToPlayer();
+       });
     }
 
     /**

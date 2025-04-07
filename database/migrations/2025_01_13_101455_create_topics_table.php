@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('topics', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('title');
+            $table->string('title')->unique();
             $table->text('description');
             $table->string('image')->nullable();
             $table->boolean('is_custom')->default(false);

@@ -2,11 +2,13 @@
 
 use App\enums\PlayerPermission;
 use App\Http\Controllers\CustomTopicController;
+use App\Http\Controllers\FriendshipController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\StorePushTokenController;
 use App\Http\Controllers\TopicController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,7 +30,6 @@ Route::prefix('v1')->group(function () {
             Route::delete('/{player}', [PlayerController::class, 'destroy'])->name('players.destroy'); // Delete player
             Route::get('/{player}', [PlayerController::class, 'show'])->name('players.show');
             Route::get('/', [PlayerController::class, 'index'])->name('players.index');
-
         });
 
         Route::resource('/', PlayerController::class)->except([
@@ -54,8 +55,9 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::middleware(['auth:sanctum', PlayerPermission::CAN_CREATE_GAME->value])->group(function () {
-            Route::post('/', [GameController::class, 'store'])->name('games.store');
+
         });
+        Route::post('/', [GameController::class, 'store'])->name('games.store');
 
         Route::middleware(['can:destroy,game'])->group(function () {
             Route::delete('/{game}', [GameController::class, 'destroy'])->name('games.destroy');
@@ -64,6 +66,17 @@ Route::prefix('v1')->group(function () {
 
     Route::get('/stats/{player}', [StatsController::class, 'show'])->name('stats.show');
     Route::get('/notifications/{player}', [NotificationController::class, 'show'])->name('notifications.index');
-    Route::get('/topics/custom', [CustomTopicController::class, 'index'])->name('custom-topics.index');
+    Route::get('/topics/custom-topics', [CustomTopicController::class, 'index'])->name('custom-topics.index');
+    Route::post('/topics/custom-topics', [CustomTopicController::class, 'store'])->name('custom-topics.store');
     Route::get('/topics', [TopicController::class, 'index'])->name('topics.index');
+
+   Route::prefix('/friendships')->group(function () {
+        Route::get('/{player}', [FriendshipController::class, 'show'])->name('friendships.index');
+        Route::post('/', [FriendshipController::class, 'store'])->name('friendships.store');
+        Route::put('/', [FriendshipController::class, 'update'])->name('friendships.update');
+        Route::delete('/', [FriendshipController::class, 'destroy'])->name('friendships.destroy');
+    });
+
+
+   Route::post('/push-token', StorePushTokenController::class)->name('push-tokens.store');
 });

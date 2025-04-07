@@ -10,8 +10,9 @@ class CreateFriendshipsTable extends Migration
     {
         Schema::create('friendships', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->enum('status', ['pending', 'accepted', 'declined'])->default('pending');
+            $table->enum('status', ['sent', 'accepted', 'received'])->default('sent');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreignUuid('requester_id')->references('id')->on('players')->onDelete('cascade');
             $table->foreignUuid('addressee_id')->references('id')->on('players')->onDelete('cascade');

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\GameCreated;
 use App\Http\Requests\GameCreateUpdateRequest;
 use App\Http\Resources\GameResource;
 use App\Models\Game;
 use App\Models\Player;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class GameController extends Controller
 {
@@ -28,18 +30,41 @@ class GameController extends Controller
     }
     public function store(GameCreateUpdateRequest $request)
     {
+        Log::info('game getting created---------');
         $data = $request->validated();
-        $game = Game::create($data);
+        $playerIds = $request->input('players', []);
+        unset($data['players']);
+
+        $game = Game::withoutEvents(function () use ($data) {
+            return Game::create($data);
+        });
+
+
+        if (empty($playerIds)) {
+            return response()->json([
+                'message' => 'No players provided.',
+            ], 422);
+        }
+
+        $game->players()->attach($playerIds);
+        $game->load('players'); // Ensure players are loaded in memory
+
+        Log::info('game getting created---------', [
+            'game' => $game,
+            'players' => $game->players,
+        ]);
+        event(new GameCreated($game));
 
         return response()->json([
             '_links' => [
                 'self' => [
-                    'href' => 'api/v1/games/'.$game->id,
+                    'href' => route('games.show', $game->id),
                 ],
             ],
             'data' => new GameResource($game),
         ], 201);
     }
+
 
     public function update(GameCreateUpdateRequest $request, Game $game)
     {

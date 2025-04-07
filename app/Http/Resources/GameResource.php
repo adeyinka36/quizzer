@@ -28,6 +28,7 @@ class GameResource extends JsonResource
             'status' => $this->status,
             'creator_id' => $this->creator_id,
             'topic_id' => $this->topic_id,
+            'players' => PlayerResource::collection($this->whenLoaded('players')),
         ];
     }
 }
