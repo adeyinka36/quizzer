@@ -22,14 +22,7 @@ class sendPlayerInvitesForGame
      */
     public function handle(GameCreated $event): void
     {
-        Log::info('GameCreated event triggered listener', [
-            'game_id' => $event->game->id,
-            'game_name' => $event->game->name,
-            'players' => $event->game->players()->pluck('id'),
-        ]);
         $game = $event->game;
-        $game->players()->each(function ($player) use ($game) {
-            $player->sendGameInvite($game);
-        });
+        $game->creator->sendGameInvite($game);
     }
 }

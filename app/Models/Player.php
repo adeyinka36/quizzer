@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Http\Resources\PlayerResource;
+use App\Http\Resources\TopicResource;
 use App\Jobs\SendResetPasswordToken;
 use Database\Factories\PlayerFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -214,7 +216,7 @@ class Player extends Authenticatable
         return $this->isFriendWith(auth()?->user());
     }
 
-    public function sendGameInvite(Game $game)
+    public function sendGameInvite(Game $game): void
     {
         $notifier  = app('expo_push_notification');
 
@@ -223,10 +225,54 @@ class Player extends Authenticatable
             ->pluck('push_token')
             ->toArray();
 
+        $gameTopic = $game->topic->title ?? null;
+
         $notifier->toExpoNotification(
             playerTokens: $playerTokens,
             title: 'Game Invite',
-            body: 'You have been invited to join a game.'
+            body: 'You have been invited to join a game of '. $gameTopic. ' by ' . $game->creator->username . '.',
+            data: [
+                'game_id' => $game->id,
+                'type' => 'game_invite',
+                'targetScreen' => '/createGame',
+                'currentGame' => $game->game_data
+            ]
+        );
+    }
+
+    public function sendGameInviteRejectedOrAcceptedNotification(Game $game, string $action): void
+    {
+        $notifier  = app('expo_push_notification');
+
+        $playerTokens = $game->players()
+            ->whereNotNull('push_token')
+            ->pluck('push_token')
+            ->toArray();
+
+        $gameTopic = $game->topic->title ?? null;
+        $gameData = $game->game_data;
+
+        foreach ($gameData['players'] as &$player) {
+            if ($player['id'] === $this->id) {
+                $player['is_ready'] = $action === 'accepted';
+                break;
+            }
+        }
+
+        $game->game_data = $gameData;
+        $game->save();
+
+        $notifier->toExpoNotification(
+            playerTokens: $playerTokens,
+            title: 'Game Invite ' . ucfirst($action),
+            body: $game->creator->username. ' ' . $action . ' invite for ' .$gameTopic,
+            data: [
+                'game_id' => $game->id,
+                'type' => 'game_invite_' . $action,
+                'targetScreen' =>  '/createGame',
+                'accepting_player_id' => $this->id,
+                'game_data' => $game->game_data,
+            ]
         );
     }
 }

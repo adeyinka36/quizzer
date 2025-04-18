@@ -16,6 +16,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->text('name')->nullable();
             $table->enum('status', ['IN_PROGRESS', 'COMPLETED', 'CANCELLED'])->default('IN_PROGRESS');
+            $table->json('game_data')->nullable();
             $table->softDeletes();
             $table->timestamps();
 

@@ -47,6 +47,7 @@ class PlayerResource extends JsonResource
                 ->exists();
         }
 
+
         return $data;
     }
 }

@@ -19,25 +19,28 @@ class SendNotificationToPlayer extends Notification
     /**
      * @throws ConnectionException
      */
-    public function toExpoNotification(array $playerTokens, string $title, string $body): ExpoMessage
+    public function toExpoNotification(array $playerTokens, string $title, string $body, array $data): void
     {
-        Log::info('Sending notification to player tokens: ' . implode(', ', $playerTokens));
-
-        $response = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-        ])->post('https://exp.host/--/api/v2/push/send', [
+        $payload = [
             'to' => $playerTokens,
             'title' => $title,
             'body' => $body,
-        ]);
-        Log::info('Sent direct Expo notification to---: ' );
+            'data' => $data,
+        ];
+        $response = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+        ])->post('https://exp.host/--/api/v2/push/send', $payload);
 
-        return (new ExpoMessage())
-            ->to($playerTokens)
-            ->title($title)
-            ->body($body)
-            ->channelId('default');
+        //resend if failed
+        if ($response->failed()) {
+            sleep(5);
+            Log::error('Failed to send notification, retrying...');
+             Http::withHeaders([
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ])->post('https://exp.host/--/api/v2/push/send', $payload);
+        }
     }
 
 

@@ -62,6 +62,8 @@ Route::prefix('v1')->group(function () {
         Route::middleware(['can:destroy,game'])->group(function () {
             Route::delete('/{game}', [GameController::class, 'destroy'])->name('games.destroy');
         });
+
+        Route::post('/game-invite-response/{game}/{player}', [GameController::class, 'acceptOrDeclineInvite'])->name('game-invite-response');
     });
 
     Route::get('/stats/{player}', [StatsController::class, 'show'])->name('stats.show');
@@ -79,4 +81,6 @@ Route::prefix('v1')->group(function () {
 
 
    Route::post('/push-token', StorePushTokenController::class)->name('push-tokens.store');
+
+
 });

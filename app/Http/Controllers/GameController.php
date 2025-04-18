@@ -7,6 +7,7 @@ use App\Http\Requests\GameCreateUpdateRequest;
 use App\Http\Resources\GameResource;
 use App\Models\Game;
 use App\Models\Player;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -30,15 +31,16 @@ class GameController extends Controller
     }
     public function store(GameCreateUpdateRequest $request)
     {
-        Log::info('game getting created---------');
         $data = $request->validated();
         $playerIds = $request->input('players', []);
         unset($data['players']);
+        $request->game_creation = true;
 
         $game = Game::withoutEvents(function () use ($data) {
             return Game::create($data);
         });
 
+        $game->storeGameJson($request->all());
 
         if (empty($playerIds)) {
             return response()->json([
@@ -47,12 +49,8 @@ class GameController extends Controller
         }
 
         $game->players()->attach($playerIds);
-        $game->load('players'); // Ensure players are loaded in memory
+        $game->load('players');
 
-        Log::info('game getting created---------', [
-            'game' => $game,
-            'players' => $game->players,
-        ]);
         event(new GameCreated($game));
 
         return response()->json([
@@ -98,5 +96,50 @@ class GameController extends Controller
         $game->delete();
 
         return response()->json([], 204);
+    }
+
+
+    public function acceptOrDeclineInvite(Game $game, Player $player, Request $request): JsonResponse
+    {
+        $request->validate([
+            'action' => 'required|in:accepted,rejected',
+        ]);
+
+
+        $player->sendGameInviteRejectedOrAcceptedNotification($game, $request->input('action'));
+
+        if ($request->input('status') === 'accepted') {
+            $game->players()->attach($player->id);
+            return response()->json([
+                'message' => 'Game invite accepted successfully.'
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Game invite rejected successfully.'
+            ]);
+        }
+
+    }
+
+
+    public function rejectInvite(Request $request): JsonResponse
+    {
+        $request->validate([
+            'player_id' => 'required|exists:players,id',
+            'game_id' => 'required|exists:games,id',
+        ]);
+        $game = Game::find($request->input('game_id'));
+        $player = Player::find($request->input('player_id'));
+
+        if(!$game || !$player) {
+            return response()->json([
+                'message' => 'Game or player not found.',
+            ], 404);
+        }
+
+
+        return response()->json([
+            'message' => 'Game invite rejected successfully.'
+        ]);
     }
 }
