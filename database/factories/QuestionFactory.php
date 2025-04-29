@@ -21,7 +21,7 @@ class QuestionFactory extends Factory
     {
         return [
             'question_text' => $this->faker->sentence,
-            'topic_id' => Topic::factory()->create()->id,
+            'topic_id' => Topic::inRandomOrder()->first()->id,
             'options' => [
                 'A' => $this->faker->word,
                 'B' => $this->faker->word,

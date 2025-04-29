@@ -142,4 +142,13 @@ class GameController extends Controller
             'message' => 'Game invite rejected successfully.'
         ]);
     }
+
+    public function initiateGame(Game $game): JsonResponse
+    {
+        $gameDataForSocket =  $game->getGameDataForSocket();
+        return response()->json([
+            'message' => 'Game initiated successfully.',
+            'data' => $gameDataForSocket ,
+        ]);
+    }
 }

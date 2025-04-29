@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Http\Resources\PlayerResource;
+use App\Http\Resources\QuestionResource;
 use App\Http\Resources\TopicResource;
+use Database\Factories\GameFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,10 +15,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property Collection<int, Question> $questions
  * @property Collection<int, Player> $players
+ * @property Collection<int, Player> $creator
+ * @property Collection<int, Player> $winner
+ * @property Collection<int, Topic> $topic
+ *
  */
 class Game extends Model
 {
-    /** @use HasFactory<\Database\Factories\GameFactory> */
+    /** @use HasFactory<GameFactory> */
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
@@ -56,6 +62,11 @@ class Game extends Model
         return $this->belongsTo(Topic::class);
     }
 
+    public function questions()
+    {
+        return $this->HasMany(Question::class);
+    }
+
     public function scopeWithQuestionsAndOptions($query)
     {
         return $query->with('questions.options');
@@ -93,5 +104,21 @@ class Game extends Model
         // Assign and save game data
         $this->game_data = $gameData;
         $this->save();
+    }
+
+
+    public function getGameDataForSocket(): array
+    {
+        $request = request(); // Laravel needs this for `toArray()`
+
+        return [
+            'id' => $this->id,
+            'players' => $this->players->map(fn ($player) => [
+                'id' => $player->id,
+                'username' => $player->username,
+            ])->all(),
+            'topic' => (new TopicResource($this->topic))->toArray($request),
+            'questions' => QuestionResource::collection($this->questions)->toArray($request),
+        ];
     }
 }

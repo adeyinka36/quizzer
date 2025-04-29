@@ -6,6 +6,7 @@ use App\Http\Resources\PlayerResource;
 use App\Http\Resources\TopicResource;
 use App\Jobs\SendResetPasswordToken;
 use Database\Factories\PlayerFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,6 +18,23 @@ use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
 use Random\RandomException;;
 
+
+/**
+ * @property Player $creator
+ * @property Player $winner
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $username
+ * @property string $email
+ * @property string $password
+ * @property string $password_reset_token
+ * @property string $password_reset_token_created_at
+ * @property string $avatar
+ * @property string $push_token
+ * @property string $is_member
+ * @property string $zivas
+ * @property string $membership_id
+ */
 class Player extends Authenticatable
 {
     /** @use HasFactory<PlayerFactory> */
@@ -227,14 +245,22 @@ class Player extends Authenticatable
 
         $gameTopic = $game->topic->title ?? null;
 
+        $creatorToken = trim($this->push_token);
+        $playerTokens = array_map('trim', $playerTokens);
+
+        $nonCreatorPlayerTokens = array_values(array_filter($playerTokens, function ($token) use ($creatorToken) {
+            return $token !== $creatorToken;
+        }));
+
+
         $notifier->toExpoNotification(
-            playerTokens: $playerTokens,
+            playerTokens: $nonCreatorPlayerTokens,
             title: 'Game Invite',
             body: 'You have been invited to join a game of '. $gameTopic. ' by ' . $game->creator->username . '.',
             data: [
                 'game_id' => $game->id,
                 'type' => 'game_invite',
-                'targetScreen' => '/createGame',
+                'targetScreen' => '/confirmGame',
                 'currentGame' => $game->game_data
             ]
         );
@@ -268,8 +294,8 @@ class Player extends Authenticatable
             body: $game->creator->username. ' ' . $action . ' invite for ' .$gameTopic,
             data: [
                 'game_id' => $game->id,
-                'type' => 'game_invite_' . $action,
-                'targetScreen' =>  '/createGame',
+                'type' => 'game_invite_response',
+                'targetScreen' =>  '/confirmGame',
                 'accepting_player_id' => $this->id,
                 'game_data' => $game->game_data,
             ]

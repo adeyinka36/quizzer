@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
             MembershipSeeder::class,
             PlayerSeeder::class,
             TopicSeeder::class,
-            QuestionSeeder::class,
             GameSeeder::class,
             GamePlayerSeeder::class,
             NotificationSeeder::class

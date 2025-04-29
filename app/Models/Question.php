@@ -20,13 +20,15 @@ class Question extends Model
         'options' => 'array',
     ];
 
+    protected $fillable = [
+        'question',
+        'answer',
+        'options',
+        'game_id',
+        'creator_id',
+        'topic_id',
+    ];
 
-    public function games()
-    {
-        return $this->belongsToMany(Game::class)
-            ->using(GameQuestion::class)
-            ->withTimestamps();
-    }
 
     public function topics()
     {
@@ -34,4 +36,11 @@ class Question extends Model
             ->using(Topic::class)
             ->withTimestamps();
     }
+
+    public function game()
+    {
+        return $this->belongsTo(Game::class);
+    }
+
+
 }

@@ -11,7 +11,7 @@ class GamePlayer extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
-    protected $table = 'game_players';
+    protected $table = 'game_player';
 
     protected $fillable = ['game_id', 'player_id'];
 }

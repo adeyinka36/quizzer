@@ -22,7 +22,10 @@ return new class extends Migration
 
 
 
+
             $table->foreignUuid('topic_id')->references('id')->on('topics')->nullOnDelete();
+            $table->foreignUuid('game_id')->nullable()->references('id')->on('games')->nullOnDelete();
+
 
             $table->softDeletes();
             $table->timestamps();

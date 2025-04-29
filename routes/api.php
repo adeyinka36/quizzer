@@ -64,6 +64,8 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::post('/game-invite-response/{game}/{player}', [GameController::class, 'acceptOrDeclineInvite'])->name('game-invite-response');
+
+        Route::get('initiate-game/{game}', [GameController::class, 'initiateGame'])->name('initiate-game');
     });
 
     Route::get('/stats/{player}', [StatsController::class, 'show'])->name('stats.show');
